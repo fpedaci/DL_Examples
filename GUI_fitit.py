@@ -17,7 +17,8 @@ import keras
 
 
 class DLfit:
-    def __init__(self, master):
+    def __init__(self, master, verbose=True):
+        self.verbose = verbose
         # init frame, button, text entry:
         frame = tkinter.Frame(master)
         self.Tx = tkinter.Text(frame, height=3, width=25)
@@ -51,6 +52,7 @@ class DLfit:
 
 
     def doit(self):
+        if self.verbose : print('- doit')
         self.readvals()
         self.target_func()
         self.one_layer()
@@ -61,6 +63,7 @@ class DLfit:
 
     def target_func(self):
         '''the function to fit '''
+        if self.verbose : print('target_func')
         self.func = lambda z: np.sin(z*0.1) * np.cos(z*0.05) * 0.3*np.sin(1 + z*0.06) 
         self.targetf = self.func(self.x)
         self.ax1.clear()
@@ -71,10 +74,11 @@ class DLfit:
 
     def calc_error(self):
         ''' calculate error from fit '''
+        if self.verbose : print('calc_error')
         self.error_fun = self.layer1 - self.targetf 
         self.error_val = np.sum(np.abs(self.error_fun))
         self.ax3.clear()
-        self.ax3.plot(self.x, self.error_fun)
+        self.ax3.plot(self.x, self.error_fun, '.')
         self.ax3.set_title(f'error = {self.error_val:.2f}', fontsize=10)
         self.ax3.set_ylabel("error", fontsize=12)
         self.ax3.set_xlabel("X", fontsize=12)
@@ -83,6 +87,7 @@ class DLfit:
     def readvals(self):
         '''read the values in text entries, 
         then send to one_layer() '''
+        if self.verbose : print('readvals')
         tx = self.Tx.get('1.0',tkinter.END)
         tx2 = self.Tx2.get('1.0',tkinter.END)
         self.w0 = np.array(list(map(float, tx.splitlines()[0].split())))
@@ -92,6 +97,7 @@ class DLfit:
 
 
     def sigmoid(self, x):
+        if self.verbose : print('sigmoid')
         return 1/(1+np.exp(-x))
 
 
@@ -101,6 +107,7 @@ class DLfit:
 
     def neuron(self, w=1, b=0, activation='sigmoid'):
         '''return output of one neuron '''
+        if self.verbose : print('neuron')
         if activation == 'relu':
             y = self.relu(w*self.x + b)
         elif activation == 'sigmoid':
@@ -118,6 +125,7 @@ class DLfit:
           \   activ(w0[2]+b0[2]) * w1[2]  /
               ...                    ...    
         '''
+        if self.verbose : print('one_layer')
         w0 = self.w0 
         b0 = self.b0 
         w1 = self.w1 
@@ -141,6 +149,7 @@ class DLfit:
 
     def deep(self):
         '''using DL to fit self.func() ''' 
+        if self.verbose : print('deep')
         # def sets:
         x_train = self.x[::10]
         y_train = self.func(x_train)
