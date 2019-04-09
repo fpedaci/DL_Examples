@@ -1,0 +1,60 @@
+
+0 
+def the goal, use image of deep model to understand vocabulary, concepts
+
+
+1
+neuron definition
+weights, bias, input, activation
+
+
+2
+perceptron, hystory
+JB example, one layer, linear, circle
+FP example GUI fit by sigmoids. TODO
+
+classification Vs regression ("In machine learning, regression algorithms attempt to estimate the mapping function (f) from the input variables (x) to numerical or continuous output variables (y). On the other hand, classification algorithms attempt to estimate the mapping function (f) from the input variables (x) to discrete or categorical output variables (y).")
+train data normalization (classical: mn=0, std=1, without changing the stored data)
+
+activations (categorical Vs regression): linear, relu, sigmoid, softmax
+loss functions (categorical Vs regression): categorical cross-entropy, MSE, MAE, ...
+intro SDG, learning rate, momentum
+other optimizers (adam, amdamax, rmsprop, adagrad ...)
+batch, minibatch, one point=SDG
+
+
+3
+hidden layers 
+densely connected
+vanishing gradient
+
+JB example circle by 2 layers
+FP example regression sin curve (changing n.layers, n.neurons, opimizer, TODO make it overfit)
+introduce loss, validation loss
+FP example classification clustering
+
+overfitting
+dropout
+TODO regularization L1 L2
+
+
+4
+convolutional layers
+relu most used
+def convolution, padding, pas, max pooling
+
+FP example mnist
+JB example segmentation
+
+
+5
+advanced DL
+recurrent NN
+residual NN
+generative (adversarial) NN
+
+
+6
+Misc
+is DL supervised or unsupervised? can be both
+TODO Logistic Regression
