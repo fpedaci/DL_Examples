@@ -57,4 +57,8 @@ generative (adversarial) NN
 6
 Misc
 is DL supervised or unsupervised? can be both
-TODO Logistic Regression
+TODO ? Logistic Regression
+
+intersting links:
+https://playground.tensorflow.org
+
