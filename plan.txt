@@ -1,4 +1,4 @@
-
+ 
 0 
 def the goal, use image of deep model to understand vocabulary, concepts
 
@@ -47,6 +47,9 @@ FP example mnist
 JB example segmentation
 
 
+Unet give example?
+dockerhub keras-tf?
+
 5
 advanced DL
 recurrent NN
@@ -61,4 +64,7 @@ TODO ? Logistic Regression
 
 intersting links:
 https://playground.tensorflow.org
+injoy ?
+
+
 
