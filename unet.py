@@ -61,6 +61,8 @@ class Unet():
         self.def_unet()
         if trainit:
             self.train_unet()
+            self.plot_history()
+            self.show_val()
 
 
 
@@ -101,7 +103,6 @@ class Unet():
             lab[np.nonzero(lab == 200)] = 220            
             self.train_set[i] = self.open_one_image(self.basepath + 'Training/Original/' + f)
             self.train_lab[i] = lab
-
         # normalize training set:
         self.train_set = (self.train_set - np.mean(self.train_set, axis=0))/np.std(self.train_set, axis=0)
         self.train_set = self.train_set[:,:,:,np.newaxis]
@@ -142,6 +143,7 @@ class Unet():
                 m = conv_block(m, dim, acti, bn, res, do)
             return m
 
+        print('def_unet(): model init...')
         img_shape = (self.img_w, self.img_h, 1)
         out_ch = self.out_ch
         start_ch = self.start_ch
@@ -160,7 +162,9 @@ class Unet():
         # model:
         self.model = Model(inputs=i, outputs=o)
         # compile:
+        print('def_unet(): model compile...')
         self.model.compile(optimizer='Adamax', loss='categorical_crossentropy')
+        print('def_unet(): done.')
     
     
 
@@ -170,7 +174,7 @@ class Unet():
                         batch_size=self.batch_size, 
                         epochs=self.epochs, 
                         verbose=1, 
-                        validation_split=0.1 )
+                        validation_split=0.2 )
 
 
 
@@ -191,19 +195,30 @@ class Unet():
         lab1 = self.model.history.validation_data[1][imgidx,...,0]
         lab2 = self.model.history.validation_data[1][imgidx,...,1]
         lab3 = self.model.history.validation_data[1][imgidx,...,2]
-        fig = plt.figure('show_val', clear=True)
+        loss = self.model.history.history['loss']
+        val_loss = self.model.history.history['val_loss']
+        epochs = self.model.history.epoch
+        fig = plt.figure('show_val', clear=True, figsize=(7.5,6))
         ax1 = fig.add_subplot(321)
         ax1.imshow(img)
         ax1.set_title(f'val[{imgidx}]')
         ax2 = fig.add_subplot(322)
         ax2.imshow(lab1)
+        ax2.set_title('lab1')
         ax3 = fig.add_subplot(323)
         ax3.imshow(lab2)
+        ax3.set_title('lab2')
         ax4 = fig.add_subplot(324)
         ax4.imshow(lab3)
+        ax4.set_title('lab3')
         ax5 = fig.add_subplot(325)
         ax5.imshow(img+ 3*lab3)
         ax5.set_title('overlay')
+        ax6 = fig.add_subplot(326)
+        ax6.semilogy(epochs, loss, label='loss')
+        ax6.semilogy(epochs, val_loss, label='val_loss')
+        ax6.set_xlabel('epochs')
+        ax6.legend()
 
 
     def check_predition(self, imgidx=0):
