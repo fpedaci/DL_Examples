@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from keras.models import Input, Model
-from keras.layers import Conv2D, Concatenate, MaxPooling2D
+from keras.layers import Conv2D, Conv2DTranspose, Concatenate, MaxPooling2D
 from keras.layers import UpSampling2D, Dropout, BatchNormalization
 from keras.utils import to_categorical
 import PIL
@@ -85,14 +85,14 @@ class Unet():
     def make_sets(self, num_images=100):
         ''' read, crop, and store training testing npy images 
             num_images : take all if None
-            TODO include only files with 1,120,220
+            TODO include only files with 1,120,220 without converting labels
         '''
         l_train_orig = np.sort(os.listdir(self.basepath+'Training/Original/'))
         if num_images == None:
             num_images = len(l_train_orig)
         # init sets:
-        self.train_set = np.zeros((self.num_images, self.img_h, self.img_w))
-        self.train_lab = np.zeros((self.num_images, self.img_h, self.img_w))
+        self.train_set = np.zeros((num_images, self.img_h, self.img_w))
+        self.train_lab = np.zeros((num_images, self.img_h, self.img_w))
         # open store images:
         for i in range(num_images):
             f = l_train_orig[i]
@@ -195,6 +195,7 @@ class Unet():
         lab1 = self.model.history.validation_data[1][imgidx,...,0]
         lab2 = self.model.history.validation_data[1][imgidx,...,1]
         lab3 = self.model.history.validation_data[1][imgidx,...,2]
+        lab4 = self.model.history.validation_data[1][imgidx,...,3]
         loss = self.model.history.history['loss']
         val_loss = self.model.history.history['val_loss']
         epochs = self.model.history.epoch
@@ -203,22 +204,25 @@ class Unet():
         ax1.imshow(img)
         ax1.set_title(f'val[{imgidx}]')
         ax2 = fig.add_subplot(322)
-        ax2.imshow(lab1)
-        ax2.set_title('lab1')
-        ax3 = fig.add_subplot(323)
-        ax3.imshow(lab2)
-        ax3.set_title('lab2')
-        ax4 = fig.add_subplot(324)
-        ax4.imshow(lab3)
-        ax4.set_title('lab3')
-        ax5 = fig.add_subplot(325)
-        ax5.imshow(img+ 3*lab3)
-        ax5.set_title('overlay')
-        ax6 = fig.add_subplot(326)
-        ax6.semilogy(epochs, loss, label='loss')
-        ax6.semilogy(epochs, val_loss, label='val_loss')
-        ax6.set_xlabel('epochs')
-        ax6.legend()
+        ax2.imshow(img + 4*lab4)
+        ax2.set_title('img+lab4')
+        ax3 = fig.add_subplot(345)
+        ax3.imshow(lab1)
+        ax3.set_title('lab1')
+        ax4 = fig.add_subplot(346)
+        ax4.imshow(lab2)
+        ax4.set_title('lab2')
+        ax5 = fig.add_subplot(347)
+        ax5.imshow(lab3)
+        ax5.set_title('lab3')
+        ax6 = fig.add_subplot(348)
+        ax6.imshow(lab4)
+        ax6.set_title('lab4')
+        ax7 = fig.add_subplot(313)
+        ax7.semilogy(epochs, loss, label='loss')
+        ax7.semilogy(epochs, val_loss, label='val_loss')
+        ax7.set_xlabel('epochs')
+        ax7.legend()
 
 
     def check_predition(self, imgidx=0):
