@@ -8,7 +8,7 @@ n_points = 5000
 noise = 0.05
 
 epochs = 20
-activation = 'relu' # try: 'sigmoid'
+activation = 'relu' # try: 'sigmoid' 'softmax'
 optimizer = 'adagrad'  # try: 'adam', 'sgd', 'adagrad', 'adamax'
 
 
@@ -46,7 +46,7 @@ model.compile(loss='mse', optimizer=optimizer)
 # train the model:
 model.fit(x_train, 
         y_train, 
-        validation_data=(x_val, y_val), 
+        validation_split=0.1, #data=(x_val, y_val), 
         epochs=epochs, 
         batch_size=8, 
         verbose=1)
@@ -63,7 +63,6 @@ plt.legend()
 plt.subplot(212)
 plt.plot(model.history.history['loss'], label='loss')
 plt.plot(model.history.history['val_loss'], label='val_loss')
-plt.xlabel('epoch')
 plt.legend()
 plt.show()
 

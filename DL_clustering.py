@@ -23,14 +23,14 @@ class DL_clustering():
             epochs : n. of epochs for learning
             savefiles = save or not images
         '''    
+        if type(cl_width) == float or type(cl_width) == int:
+            cl_width = np.repeat(cl_width, len(cl_pos))
         if len(cl_pos) > len(cl_width):
             print('warning! cl_pos longer than cl_width')
             cl_pos = cl_pos[:len(cl_width)]
         if len(cl_pos) < len(cl_width):
             print('warning! cl_width longer cl_pos') 
             cl_width = cl_width[:len(cl_pos)]
-        if type(cl_width) == float or type(cl_width) == int:
-            cl_width = np.repeat(cl_width, len(cl_pos))
 
         self.n_clusters = len(cl_pos)
         self.pts_cluster = pts_cluster
@@ -126,6 +126,7 @@ class DL_clustering():
 
     def make_train_model(self, plots=False):
         if self.verbose: print('make_train_model')
+        # init the model:
         self.model = keras.models.Sequential()
         self.model.add(keras.layers.Dense(64, input_shape=(2,), activation='relu'))
         self.model.add(keras.layers.Dense(8, activation='relu'))
@@ -156,6 +157,7 @@ class DL_clustering():
             self.ax2.semilogy(self.epochs_li, self.loss_li, '-', label='loss')
             self.ax2.semilogy(self.epochs_li, self.val_loss_li, '--', label='val_loss')
             self.ax2.legend(fontsize=8)
+            self.ax2.set_xlabel('epoch')
         if self.savefiles:
             if   epochs < 10: filename = f'DLclustering_00{epochs}.png'
             elif epochs < 100: filename = f'DLclustering_0{epochs}.png'

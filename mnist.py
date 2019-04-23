@@ -15,7 +15,7 @@ class mnist():
     def __init__(self):
         self.load_data()
         self.make_model()
-        print('\n\nDone. Now test some image \'with mn.predict(index)\' ')
+        print('\nDone. Now test some image \'with mn.predict(index)\' ')
 
 
     def load_data(self):
@@ -26,11 +26,6 @@ class mnist():
 
 
     def make_model(self):
-        # build model:
-        self.net = keras.models.Sequential() 
-        self.net.add(keras.layers.Dense(512, activation='relu', input_shape=(28*28,)))   
-        self.net.add(keras.layers.Dense(10, activation='softmax'))
-        self.net.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
         # prepare data:
         self.train_imgs = self.train_imgs.reshape((60000, 28*28))
         self.train_imgs = self.train_imgs.astype('float32')/255
@@ -38,11 +33,30 @@ class mnist():
         self.test_imgs = self.test_imgs.astype('float32')/255
         self.train_labels = keras.utils.to_categorical(self.train_labels)
         self.test_labels  = keras.utils.to_categorical(self.test_labels)
+
+        # build model:
+        print('Init model...')
+        self.model = keras.models.Sequential() 
+        self.model.add(keras.layers.Dense(512, activation='relu', input_shape=(28*28,)))   
+        self.model.add(keras.layers.Dense(10, activation='softmax'))
+
+        self.model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
         # train the model: 
-        self.net.fit(self.train_imgs, self.train_labels, epochs=10, batch_size=128)
+        self.model.fit(self.train_imgs, self.train_labels, validation_split=0.1, epochs=10, batch_size=128)
+        # plot losses:
+        plt.figure('make_model')
+        plt.subplot(211)
+        plt.plot(self.model.history.history['loss'], label='loss')
+        plt.plot(self.model.history.history['val_loss'], label='val_loss')
+        plt.legend()
+        plt.subplot(212)
+        plt.plot(self.model.history.history['acc'], label='accuracy')
+        plt.legend()
+        plt.subplot(212)
+        plt.xlabel('epoch')
 
 
     def predict(self, n=0):
         '''show test image number n with its prediction'''
         plt.imshow(self.test_imgs[n].reshape(28,28)) 
-        plt.title(f'True: {np.where(self.test_labels[n])[0]}   Predicted:{np.argmax(self.net.predict(self.test_imgs[n:n+1]))}')
+        plt.title(f'True: {np.where(self.test_labels[n])[0]}   Predicted:{np.argmax(self.model.predict(self.test_imgs[n:n+1]))}')
