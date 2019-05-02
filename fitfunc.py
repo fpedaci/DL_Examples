@@ -8,7 +8,7 @@ n_points = 5000
 noise = 0.05
 
 epochs = 20
-activation = 'relu' # try: 'sigmoid' 'softmax'
+activation = 'relu' # try: 'sigmoid' 
 optimizer = 'adagrad'  # try: 'adam', 'sgd', 'adagrad', 'adamax'
 
 
