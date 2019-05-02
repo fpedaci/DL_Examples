@@ -4,12 +4,23 @@ import numpy as np
 
 class mnist():
     ''' simple sequential model to learn mnist dataset 
-    usage:
+    
+    ex usage:
+
         import mnist
-        mn = mnist.mnist()
-        mn.predict(3)
-        mn.predict(10) 
-        ...
+        # use densely connected model:
+        m_dense = mnist.mnist(model_type='dense', epoch=10)
+        
+        # use convolutional + densely connected model:
+        m_conv  = mnist.mnist(model_type='conv' , epoch=5)
+        
+        # test:
+        m.predict(3)
+
+        # if changes are made, reload module:
+        import importlib
+        importlib.reload(mnist)
+    
     '''
 
     def __init__(self, model_type='dense', epochs=10):
