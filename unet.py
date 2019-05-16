@@ -1,4 +1,4 @@
-# NOTE: The image size should be selected, such that the consecutive convs and max-pooling yields even values of x and y (i.e. width and height of the feature map)at each stage. 96x96, 128x128, 256x256. Crop out the borders to get an appropriate image size
+# NOTE: The image size should be selected, such that the consecutive convs and max-pooling yields even values of x and y (i.e. width and height of the feature map)at each stage. 16x16, 32x32, 96x96, 128x128, 256x256. Crop out the borders to get an appropriate image size
 
 # Note: when using the categorical_crossentropy loss, your targets should be in categorical format (e.g. if you have 10 classes, the target for each sample should be a 10-dimensional vector that is all-zeros except for a 1 at the index corresponding to the class of the sample). In order to convert integer targets into categorical targets, you can use the Keras utility to_categorical
 # from keras.utils import to_categorical
@@ -19,7 +19,7 @@ import os
 class Unet():
 
 
-    def __init__(self, num_images=100, img_w=48, img_h=48, out_ch=3, start_ch=64, depth=4, inc_rate=2., activation='relu', dropout=0, batchnorm=True, maxpool=True, upconv=True, residual=False, batch_size=16, epochs=5, trainit=False):
+    def __init__(self, num_images=100, img_w=48, img_h=48, start_ch=64, depth=4, inc_rate=2., activation='relu', dropout=0, batchnorm=True, maxpool=True, upconv=True, residual=False, batch_size=16, epochs=5, trainit=False):
         '''
             Credit: https://github.com/pietz/unet-keras/blob/master/unet.py
 
@@ -27,8 +27,7 @@ class Unet():
             (https://arxiv.org/abs/1505.04597)
             ---
             img_shape:  (height, width, channels)
-            out_ch:     number of output channels
-            start_ch:   number of channels of the first conv
+            start_ch:   number of channels of the first conv layer
             depth:      zero indexed depth of the U-structure
             inc_rate:   rate at which the conv channels will increase
             activation: activation function after convolutions
@@ -44,7 +43,7 @@ class Unet():
         self.img_w = img_w        
         self.img_h = img_h        
         
-        self.out_ch = out_ch
+        #self.out_ch = out_ch
         self.start_ch = start_ch
         self.depth = depth
         self.inc_rate = inc_rate
@@ -145,7 +144,7 @@ class Unet():
 
         print('def_unet(): model init...')
         img_shape = (self.img_w, self.img_h, 1)
-        out_ch = self.out_ch
+        out_ch = self.num_labels
         start_ch = self.start_ch
         depth = self.depth
         inc_rate = self.inc_rate
@@ -163,7 +162,7 @@ class Unet():
         self.model = Model(inputs=i, outputs=o)
         # compile:
         print('def_unet(): model compile...')
-        self.model.compile(optimizer='Adamax', loss='categorical_crossentropy')
+        self.model.compile(optimizer='Adamax', loss='categorical_crossentropy', metrics=['accuracy'])
         print('def_unet(): done.')
     
     
@@ -195,7 +194,10 @@ class Unet():
         lab1 = self.model.history.validation_data[1][imgidx,...,0]
         lab2 = self.model.history.validation_data[1][imgidx,...,1]
         lab3 = self.model.history.validation_data[1][imgidx,...,2]
-        lab4 = self.model.history.validation_data[1][imgidx,...,3]
+        if self.num_labels == 4:
+            lab4 = self.model.history.validation_data[1][imgidx,...,3]
+        else:
+            lab4 = lab3
         loss = self.model.history.history['loss']
         val_loss = self.model.history.history['val_loss']
         epochs = self.model.history.epoch
